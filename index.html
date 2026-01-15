@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>3060 총기 연구소 (Final Stable)</title>
+    <title>3060 총기 연구소 (Realism Patch)</title>
     <style>
-        /* [핵심] 모든 요소의 크기 계산을 고정 */
+        /* [기본 설정] 깜빡임 방지 유지 */
         * { box-sizing: border-box; }
         
         body {
@@ -17,7 +17,7 @@
             align-items: center;
             padding: 20px;
             margin: 0;
-            overflow-y: scroll; /* 스크롤바 항상 표시 (깜빡임 방지) */
+            overflow-y: scroll; 
         }
 
         h1 {
@@ -57,8 +57,7 @@
         }
         .range-label { font-size: 16px; color: #f7a600; font-weight: bold; margin-bottom: 10px; display: block; }
         input[type=range] { width: 100%; cursor: pointer; }
-        .distance-display { font-size: 24px; font-weight: bold; color: #fff; margin-top: 5px; }
-
+        
         .category-filter { display: flex; justify-content: center; flex-wrap: wrap; gap: 8px; }
         .filter-btn {
             background: transparent; border: 1px solid #555; color: #888; padding: 6px 12px;
@@ -70,39 +69,21 @@
             display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 12px; width: 100%;
         }
         
-        /* [깜빡임 해결] 카드 스타일 - Border 변경 대신 Outline 사용 */
+        /* [카드 스타일] 깜빡임 없는 버전 유지 */
         .weapon-card {
             background: #252525;
-            border: 2px solid #333; /* 기본 테두리 고정 */
+            border: 2px solid #333; 
             border-radius: 8px; padding: 12px;
             text-align: center; cursor: pointer;
             position: relative; 
             display: flex; flex-direction: column; align-items: center;
-            
-            /* 그래픽카드 가속 관련 속성 전면 제거 -> 순수 CSS 렌더링 */
             transform: none !important;
             transition: none !important;
-            
-            /* 내용물 변경 시 주변 레이아웃 영향 차단 */
             contain: content; 
         }
-
-        /* 마우스 올렸을 때: 테두리 색을 바꾸는 게 아니라 안쪽 그림자를 줌 (리플로우 방지) */
-        .weapon-card:hover {
-            border-color: #333; /* 테두리 변경 없음 */
-            box-shadow: inset 0 0 0 2px #666; /* 안쪽 그림자로 강조 */
-        }
-        
-        /* 선택된 카드 스타일: Outline 사용 (공간 차지 안함) */
-        .weapon-card.active-1 { 
-            box-shadow: inset 0 0 0 2px #f7a600; /* 노란색 안쪽 테두리 */
-            background: #2b2510; /* 아주 미세하게 배경 변경 */
-        }
-        .weapon-card.active-2 { 
-            box-shadow: inset 0 0 0 2px #fff; /* 흰색 안쪽 테두리 */
-            background: #333; 
-        }
-        
+        .weapon-card:hover { border-color: #333; box-shadow: inset 0 0 0 2px #666; }
+        .weapon-card.active-1 { box-shadow: inset 0 0 0 2px #f7a600; background: #2b2510; }
+        .weapon-card.active-2 { box-shadow: inset 0 0 0 2px #fff; background: #333; }
         .weapon-card.hidden { display: none; }
 
         .dmg-badge {
@@ -113,57 +94,49 @@
 
         .weapon-img {
             width: 100px; height: 55px; object-fit: contain; margin-bottom: 8px;
-            display: block; 
-            /* 이미지 렌더링 최적화 */
-            image-rendering: -webkit-optimize-contrast;
+            display: block; image-rendering: -webkit-optimize-contrast;
         }
         .weapon-name { font-weight: bold; font-size: 13px; display: block; margin-bottom: 2px; color: #fff; }
-        
-        .badge-row { display: flex; gap: 4px; justify-content: center; width: 100%; }
         .badge { font-size: 10px; padding: 2px 4px; border-radius: 3px; color: #000; font-weight: bold; }
         .badge.AR { background: #ff6b6b; } .badge.DMR { background: #4ecdc4; }
         .badge.SR { background: #ffe66d; } .badge.SMG { background: #ff9ff3; }
         .badge.LMG { background: #a29bfe; } .badge.SG { background: #fab1a0; } .badge.HG { background: #dfe6e9; }
 
-        /* 결과 패널 */
+        /* [결과 패널] */
         .result-panel {
             position: fixed; bottom: 20px; right: 20px; background: #1a1a1a;
             border: 2px solid #f7a600; padding: 20px; border-radius: 12px; 
-            width: 380px; 
+            width: 420px; 
             box-shadow: 0 10px 30px rgba(0,0,0,0.8); 
             display: none; z-index: 9999;
         }
         .result-panel.show { display: block; }
         
-        /* 비교 테이블 스타일 */
-        .comp-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        /* 비교 테이블 */
+        .comp-table { width: 100%; border-collapse: collapse; font-size: 12px; }
         .comp-table th { color: #888; padding: 5px; border-bottom: 1px solid #444; }
-        .comp-table td { padding: 6px 4px; text-align: center; border-bottom: 1px solid #333; color: #eee; }
+        .comp-table td { padding: 5px 4px; text-align: center; border-bottom: 1px solid #333; color: #eee; }
         
-        .col-label { text-align: left !important; color: #aaa; width: 28%; }
-        .col-w1 { width: 36%; color: #f7a600; font-weight: bold; border-left: 1px solid #333; }
-        .col-w2 { width: 36%; color: #fff; font-weight: bold; border-left: 1px solid #333; }
+        .col-label { text-align: left !important; color: #aaa; width: 30%; }
+        .col-w1 { width: 35%; color: #f7a600; font-weight: bold; border-left: 1px solid #333; }
+        .col-w2 { width: 35%; color: #fff; font-weight: bold; border-left: 1px solid #333; }
         
         .better { color: #2ecc71 !important; } 
         .worse { color: #ff4757 !important; } 
-        .w1-name { color: #f7a600; font-size: 15px; margin-bottom: 5px; }
-        .w2-name { color: #fff; font-size: 15px; margin-bottom: 5px; }
-        
+        .section-header { background: #222; font-weight: bold; color: #ccc; text-align: center; padding: 4px; font-size: 11px; }
+
         .vs-badge { 
             background: #ff4757; color: #fff; font-weight: bold; 
             padding: 2px 6px; border-radius: 4px; font-size: 11px; vertical-align: middle;
         }
         
-        /* 헤드샷 전용 강조 스타일 */
-        .head-row td { background: rgba(247, 166, 0, 0.05); }
-
         .footer { margin-top: 40px; color: #444; font-size: 12px; }
     </style>
 </head>
 <body>
 
     <h1>🔫 3060 총기 연구소</h1>
-    <p class="subtitle">VS Mode | 클릭하여 2개를 비교하세요</p>
+    <p class="subtitle">REALISM PATCH | 풀파츠 기준 현실 고증 패치</p>
 
     <div class="container">
         <div class="controls-wrapper">
@@ -211,65 +184,62 @@
     <div class="result-panel" id="result-panel">
         <div id="panel-content"></div>
         <div style="text-align:center; margin-top:10px; font-size:11px; color:#666;">
-            * 다른 총을 클릭하면 비교 대상이 바뀝니다.
+            * 모든 수치는 풀파츠(보정기+손잡이+개머리판 등) 기준입니다.
         </div>
     </div>
 
     <div class="footer">Designed by Mini-hyung for Geon & 3060 Clan</div>
 
     <script>
+        // [리얼리즘 패치] 건이의 피드백 반영
+        // SMG(MP5K, Vector, JS9): 안정성 97~99 (무반동 레이저)
+        // M416: 안정성 93 (AR 중 최고존엄이지만 SMG보단 반동 있음)
+        // SCAR-L: 안정성 91 (M4보다 연사가 느려 체감 반동 낮지만 스펙상 M4 우위)
         const weapons = [
-            { name: "Beryl M762", type: "AR", power: 44, ammo: "7.62mm", img: "Main_BerylM762_C.png" },
-            { name: "AKM", type: "AR", power: 47, ammo: "7.62mm", img: "Main_AKM_C.png" },
-            { name: "Groza", type: "AR", power: 47, ammo: "7.62mm", img: "Main_Groza_C.png" },
-            { name: "ACE32", type: "AR", power: 43, ammo: "7.62mm", img: "Main_Ace32_C.png" },
-            { name: "Mk47 Mutant", type: "AR", power: 49, ammo: "7.62mm", img: "Main_Mk47Mutant_C.png" },
-            { name: "M416", type: "AR", power: 41, ammo: "5.56mm", img: "Main_M416_C.png" },
-            { name: "AUG", type: "AR", power: 41, ammo: "5.56mm", img: "Main_AUG_C.png" },
-            { name: "SCAR-L", type: "AR", power: 42, ammo: "5.56mm", img: "Main_ScarL_C.png" },
-            { name: "G36C", type: "AR", power: 41, ammo: "5.56mm", img: "Main_G36C_C.png" },
-            { name: "QBZ", type: "AR", power: 42, ammo: "5.56mm", img: "Main_QBZ95_C.png" },
-            { name: "K2", type: "AR", power: 41, ammo: "5.56mm", img: "Main_K2_C.png" },
-            { name: "FAMAS", type: "AR", power: 39, ammo: "5.56mm", img: "Main_FamasG2_C.png" },
-            { name: "M16A4", type: "AR", power: 43, ammo: "5.56mm", img: "Main_M16A4_C.png" },
-            { name: "SLR", type: "DMR", power: 49, ammo: "7.62mm", img: "Main_SLR_C.png" },
-            { name: "Dragunov", type: "DMR", power: 52, ammo: "7.62mm", img: "Main_Dragunov_C.png" },
-            { name: "SKS", type: "DMR", power: 46, ammo: "7.62mm", img: "Main_SKS_C.png" },
-            { name: "Mk14", type: "DMR", power: 61, ammo: "7.62mm", img: "Main_Mk14_C.png" },
-            { name: "Mk12", type: "DMR", power: 44, ammo: "5.56mm", img: "Main_Mk12_C.png" },
-            { name: "Mini14", type: "DMR", power: 42, ammo: "5.56mm", img: "Main_Mini14_C.png" },
-            { name: "QBU", type: "DMR", power: 42, ammo: "5.56mm", img: "Main_QBU88_C.png" },
-            { name: "VSS", type: "DMR", power: 43, ammo: "9mm", img: "Main_VSS_C.png" },
-            { name: "AWM", type: "SR", power: 105, ammo: ".300", img: "Main_AWM_C.png" },
-            { name: "Lynx AMR", type: "SR", power: 118, ammo: ".50", img: "Main_LynxAMR_C.png" },
-            { name: "Kar98k", type: "SR", power: 79, ammo: "7.62mm", img: "Main_Kar98k_C.png" },
-            { name: "M24", type: "SR", power: 75, ammo: "7.62mm", img: "Main_M24_C.png" },
-            { name: "Mosin", type: "SR", power: 79, ammo: "7.62mm", img: "Main_MosinNagant_C.png" },
-            { name: "Win94", type: "SR", power: 66, ammo: ".45 ACP", img: "Main_Winchester1894_C.png" },
-            { name: "P90", type: "SMG", power: 35, ammo: "5.7mm", img: "Main_P90_C.png" },
-            { name: "Vector", type: "SMG", power: 31, ammo: "9mm", img: "Main_Vector_C.png" },
-            { name: "UMP", type: "SMG", power: 41, ammo: ".45 ACP", img: "Main_UMP45_C.png" },
-            { name: "MP5K", type: "SMG", power: 33, ammo: "9mm", img: "Main_MP5K_C.png" },
-            { name: "Micro UZI", type: "SMG", power: 26, ammo: "9mm", img: "Main_UZI_C.png" },
-            { name: "Tommy Gun", type: "SMG", power: 40, ammo: ".45 ACP", img: "Main_TommyGun_C.png" },
-            { name: "Bizon", type: "SMG", power: 35, ammo: "9mm", img: "Main_BizonPP19_C.png" },
-            { name: "JS9", type: "SMG", power: 35, ammo: "9mm", img: "Main_JS9_C.png" },
-            { name: "MP9", type: "SMG", power: 31, ammo: "9mm", img: "Main_MP9_C.png" },
-            { name: "MG3", type: "LMG", power: 42, ammo: "7.62mm", img: "Main_MG3_C.png" },
-            { name: "DP-28", type: "LMG", power: 51, ammo: "7.62mm", img: "Main_DP28_C.png" },
-            { name: "M249", type: "LMG", power: 40, ammo: "5.56mm", img: "Main_M249_C.png" },
-            { name: "DBS", type: "SG", power: 234, ammo: "12 Gauge", img: "Main_DBS_C.png" },
-            { name: "S1897", type: "SG", power: 234, ammo: "12 Gauge", img: "Main_Winchester1897_C.png" },
-            { name: "S686", type: "SG", power: 234, ammo: "12 Gauge", img: "Main_S686_C.png" },
-            { name: "S12K", type: "SG", power: 216, ammo: "12 Gauge", img: "Main_Saiga12_C.png" },
-            { name: "O12", type: "SG", power: 140, ammo: "12 Gauge", img: "Main_O12_C.png" },
-            { name: "Deagle", type: "HG", power: 62, ammo: ".45 ACP", img: "Main_DesertEagle_C.png" },
-            { name: "R45", type: "HG", power: 55, ammo: ".45 ACP", img: "Main_Rhino_C.png" },
-            { name: "P1911", type: "HG", power: 41, ammo: ".45 ACP", img: "Main_M1911_C.png" },
-            { name: "P92", type: "HG", power: 35, ammo: "9mm", img: "Main_M9_C.png" },
-            { name: "R1895", type: "HG", power: 46, ammo: "7.62mm", img: "Main_NagantM1895_C.png" },
-            { name: "Skorpion", type: "HG", power: 22, ammo: "9mm", img: "Main_Skorpion_C.png" },
-            { name: "P18C", type: "HG", power: 23, ammo: "9mm", img: "Main_G18_C.png" }
+            { name: "Beryl M762", type: "AR", power: 44, ammo: "7.62mm", img: "Main_BerylM762_C.png", fireRate: 0.086, speed: 715, stability: 65, range: 400 },
+            { name: "AKM", type: "AR", power: 47, ammo: "7.62mm", img: "Main_AKM_C.png", fireRate: 0.100, speed: 715, stability: 60, range: 400 },
+            { name: "Groza", type: "AR", power: 47, ammo: "7.62mm", img: "Main_Groza_C.png", fireRate: 0.080, speed: 715, stability: 62, range: 400 },
+            { name: "ACE32", type: "AR", power: 43, ammo: "7.62mm", img: "Main_Ace32_C.png", fireRate: 0.088, speed: 720, stability: 70, range: 400 },
+            { name: "Mk47 Mutant", type: "AR", power: 49, ammo: "7.62mm", img: "Main_Mk47Mutant_C.png", fireRate: 0.100, speed: 780, stability: 65, range: 500 },
+            
+            // M416: 풀파츠 기준 93점으로 하향 (SMG보다는 반동이 있음)
+            { name: "M416", type: "AR", power: 41, ammo: "5.56mm", img: "Main_M416_C.png", fireRate: 0.086, speed: 880, stability: 93, range: 450 },
+            { name: "AUG", type: "AR", power: 41, ammo: "5.56mm", img: "Main_AUG_C.png", fireRate: 0.086, speed: 890, stability: 89, range: 450 },
+            { name: "SCAR-L", type: "AR", power: 42, ammo: "5.56mm", img: "Main_ScarL_C.png", fireRate: 0.096, speed: 870, stability: 91, range: 400 },
+            { name: "G36C", type: "AR", power: 41, ammo: "5.56mm", img: "Main_G36C_C.png", fireRate: 0.086, speed: 870, stability: 85, range: 400 },
+            { name: "QBZ", type: "AR", power: 42, ammo: "5.56mm", img: "Main_QBZ95_C.png", fireRate: 0.092, speed: 870, stability: 92, range: 400 },
+            { name: "K2", type: "AR", power: 41, ammo: "5.56mm", img: "Main_K2_C.png", fireRate: 0.086, speed: 880, stability: 82, range: 400 },
+            { name: "FAMAS", type: "AR", power: 39, ammo: "5.56mm", img: "Main_FamasG2_C.png", fireRate: 0.067, speed: 900, stability: 78, range: 400 },
+            { name: "M16A4", type: "AR", power: 43, ammo: "5.56mm", img: "Main_M16A4_C.png", fireRate: 0.100, speed: 900, stability: 70, range: 500 },
+            
+            { name: "SLR", type: "DMR", power: 58, ammo: "7.62mm", img: "Main_SLR_C.png", fireRate: 0.100, speed: 840, stability: 55, range: 800 },
+            { name: "Dragunov", type: "DMR", power: 60, ammo: "7.62mm", img: "Main_Dragunov_C.png", fireRate: 0.150, speed: 830, stability: 50, range: 800 },
+            { name: "SKS", type: "DMR", power: 53, ammo: "7.62mm", img: "Main_SKS_C.png", fireRate: 0.100, speed: 800, stability: 65, range: 800 },
+            { name: "Mk14", type: "DMR", power: 61, ammo: "7.62mm", img: "Main_Mk14_C.png", fireRate: 0.090, speed: 853, stability: 40, range: 800 },
+            { name: "Mk12", type: "DMR", power: 51, ammo: "5.56mm", img: "Main_Mk12_C.png", fireRate: 0.100, speed: 930, stability: 90, range: 800 },
+            { name: "Mini14", type: "DMR", power: 48, ammo: "5.56mm", img: "Main_Mini14_C.png", fireRate: 0.100, speed: 990, stability: 92, range: 800 },
+            { name: "QBU", type: "DMR", power: 48, ammo: "5.56mm", img: "Main_QBU88_C.png", fireRate: 0.100, speed: 945, stability: 88, range: 800 },
+            { name: "VSS", type: "DMR", power: 41, ammo: "9mm", img: "Main_VSS_C.png", fireRate: 0.086, speed: 330, stability: 95, range: 400 },
+            { name: "AWM", type: "SR", power: 105, ammo: ".300", img: "Main_AWM_C.png", fireRate: 1.85, speed: 945, stability: 90, range: 1000 },
+            { name: "Kar98k", type: "SR", power: 79, ammo: "7.62mm", img: "Main_Kar98k_C.png", fireRate: 1.9, speed: 760, stability: 90, range: 800 },
+            { name: "M24", type: "SR", power: 75, ammo: "7.62mm", img: "Main_M24_C.png", fireRate: 1.8, speed: 790, stability: 90, range: 800 },
+            
+            // SMG: MP5K, Vector 등은 풀파츠 시 무반동 레이저 (97~99)
+            { name: "P90", type: "SMG", power: 35, ammo: "5.7mm", img: "Main_P90_C.png", fireRate: 0.050, speed: 400, stability: 100, range: 200 },
+            { name: "Vector", type: "SMG", power: 31, ammo: "9mm", img: "Main_Vector_C.png", fireRate: 0.055, speed: 350, stability: 98, range: 150 },
+            { name: "UMP", type: "SMG", power: 41, ammo: ".45 ACP", img: "Main_UMP45_C.png", fireRate: 0.092, speed: 360, stability: 97, range: 200 },
+            { name: "MP5K", type: "SMG", power: 33, ammo: "9mm", img: "Main_MP5K_C.png", fireRate: 0.067, speed: 380, stability: 99, range: 200 },
+            { name: "Micro UZI", type: "SMG", power: 26, ammo: "9mm", img: "Main_UZI_C.png", fireRate: 0.048, speed: 350, stability: 88, range: 150 },
+            { name: "Tommy Gun", type: "SMG", power: 40, ammo: ".45 ACP", img: "Main_TommyGun_C.png", fireRate: 0.086, speed: 280, stability: 75, range: 200 },
+            { name: "JS9", type: "SMG", power: 35, ammo: "9mm", img: "Main_JS9_C.png", fireRate: 0.060, speed: 400, stability: 100, range: 200 },
+            
+            { name: "MG3", type: "LMG", power: 40, ammo: "7.62mm", img: "Main_MG3_C.png", fireRate: 0.060, speed: 820, stability: 75, range: 500 },
+            { name: "DP-28", type: "LMG", power: 51, ammo: "7.62mm", img: "Main_DP28_C.png", fireRate: 0.109, speed: 715, stability: 80, range: 500 },
+            { name: "M249", type: "LMG", power: 40, ammo: "5.56mm", img: "Main_M249_C.png", fireRate: 0.075, speed: 915, stability: 55, range: 500 },
+            { name: "DBS", type: "SG", power: 26, ammo: "12 Gauge", img: "Main_DBS_C.png", fireRate: 0.5, speed: 360, stability: 50, range: 50 },
+            { name: "S1897", type: "SG", power: 24, ammo: "12 Gauge", img: "Main_Winchester1897_C.png", fireRate: 0.75, speed: 360, stability: 40, range: 40 },
+            { name: "S686", type: "SG", power: 24, ammo: "12 Gauge", img: "Main_S686_C.png", fireRate: 0.2, speed: 370, stability: 60, range: 40 },
+            { name: "S12K", type: "SG", power: 22, ammo: "12 Gauge", img: "Main_Saiga12_C.png", fireRate: 0.25, speed: 350, stability: 40, range: 40 }
         ];
 
         const imgBaseUrl = "https://raw.githubusercontent.com/pubg/api-assets/master/Assets/Icons/Item/Weapon/Main";
@@ -366,6 +336,9 @@
 
             const distDmg = weapon.power * distFactor;
             
+            // DPS 계산 (현재 데미지 / 발사간격)
+            const dps = (weapon.type === 'SR' || weapon.type === 'SG') ? '-' : (distDmg / weapon.fireRate).toFixed(0);
+
             let headMult = (weapon.type === 'SR') ? 2.5 : 2.35;
             if (weapon.type === 'SG') headMult = 1.5;
 
@@ -375,7 +348,7 @@
             const htkChest = finalChest < 1 ? 99 : Math.ceil(100 / finalChest);
             const htkHead = finalHead < 1 ? 99 : Math.ceil(100 / finalHead);
 
-            return { distDmg, finalChest, finalHead, htkChest, htkHead };
+            return { distDmg, dps, finalChest, finalHead, htkChest, htkHead };
         }
 
         function updatePanel() {
@@ -388,8 +361,18 @@
             const w1 = weapons[selIdx1];
             const s1 = getCalculatedStats(w1);
             
+            // 포맷팅 함수
+            const renderRow = (label, val1, val2, colorFunc) => {
+                const c = colorFunc(val1, val2);
+                return `<tr><td class="col-label">${label}</td><td class="col-w1 ${c[0]}">${val1}</td><td class="col-w2 ${c[1]}">${val2}</td></tr>`;
+            };
+
+            const singleRow = (label, val1) => {
+                return `<tr><td class="col-label">${label}</td><td class="col-w1">${val1}</td></tr>`;
+            };
+
             if (selIdx2 === null) {
-                // 단일 뷰 (헤드 정보 추가됨)
+                // 단일 뷰
                 panelContent.innerHTML = `
                     <div style="display:flex; align-items:center; margin-bottom:15px;">
                         <img src="${imgBaseUrl}/${w1.img}" style="width:80px; height:40px; object-fit:contain; margin-right:10px;">
@@ -398,74 +381,60 @@
                             <div style="font-size:12px; color:#888;">${w1.type} / ${w1.ammo}</div>
                         </div>
                     </div>
+                    <div class="section-header">기본 스펙 (풀파츠 기준)</div>
                     <table class="comp-table">
-                        <tr><td class="col-label">기본데미지</td><td class="col-w1">${w1.power}</td></tr>
-                        <tr><td class="col-label">거리데미지</td><td class="col-w1">${s1.distDmg.toFixed(1)}</td></tr>
-                        <tr><td class="col-label">가슴(조끼)</td><td class="col-w1">${s1.finalChest.toFixed(1)}</td></tr>
-                        <tr class="head-row"><td class="col-label">헤드(헬멧)</td><td class="col-w1">${s1.finalHead.toFixed(1)}</td></tr>
-                        <tr><td class="col-label">가슴 킬</td><td class="col-w1">${s1.htkChest}발</td></tr>
-                        <tr class="head-row"><td class="col-label">헤드 킬</td><td class="col-w1" style="color:#ffcc00;">${s1.htkHead}발</td></tr>
+                        ${singleRow('1발당 데미지', w1.power)}
+                        ${singleRow('초당 데미지', s1.dps)}
+                        ${singleRow('발사 속도', w1.fireRate + 's')}
+                        ${singleRow('탄속', w1.speed + ' m/s')}
+                        ${singleRow('안정성', w1.stability + '/100')}
+                        ${singleRow('유효 사거리', w1.range + ' m')}
+                    </table>
+                    <div class="section-header" style="margin-top:10px;">실전 데미지 (${currentDistance}m)</div>
+                    <table class="comp-table">
+                        ${singleRow('거리 데미지', s1.distDmg.toFixed(1))}
+                        ${singleRow('가슴 (조끼)', s1.finalChest.toFixed(1))}
+                        ${singleRow('헤드 (헬멧)', s1.finalHead.toFixed(1))}
+                        <tr><td class="col-label">킬 확정</td><td class="col-w1">가슴 ${s1.htkChest}발 / 헤드 ${s1.htkHead}발</td></tr>
                     </table>
                 `;
             } else {
-                // 비교 뷰 (헤드 비교 추가됨)
+                // 비교 뷰
                 const w2 = weapons[selIdx2];
                 const s2 = getCalculatedStats(w2);
 
                 const cmp = (v1, v2, isLow=false) => {
-                    if (Math.abs(v1 - v2) < 0.01) return ['', ''];
-                    if (isLow) return v1 < v2 ? ['better', 'worse'] : ['worse', 'better'];
-                    return v1 > v2 ? ['better', 'worse'] : ['worse', 'better'];
+                    if (v1 == '-' || v2 == '-') return ['', ''];
+                    const n1 = parseFloat(v1), n2 = parseFloat(v2);
+                    if (Math.abs(n1 - n2) < 0.01) return ['', ''];
+                    if (isLow) return n1 < n2 ? ['better', 'worse'] : ['worse', 'better'];
+                    return n1 > n2 ? ['better', 'worse'] : ['worse', 'better'];
                 };
-
-                const cPower = cmp(w1.power, w2.power);
-                const cDist = cmp(s1.distDmg, s2.distDmg);
-                const cChest = cmp(s1.finalChest, s2.finalChest);
-                const cHead = cmp(s1.finalHead, s2.finalHead); // 헤드 데미지 비교
-                const cHTK = cmp(s1.htkChest, s2.htkChest, true);
-                const cHTKHead = cmp(s1.htkHead, s2.htkHead, true); // 헤드 킬 비교
 
                 panelContent.innerHTML = `
                     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-                        <div style="text-align:center; width:45%;">
-                            <div class="w1-name" style="font-size:14px;">${w1.name}</div>
-                        </div>
+                        <div style="text-align:center; width:45%;"><div class="w1-name" style="font-size:14px;">${w1.name}</div></div>
                         <div class="vs-badge">VS</div>
-                        <div style="text-align:center; width:45%;">
-                            <div class="w2-name" style="font-size:14px;">${w2.name}</div>
-                        </div>
+                        <div style="text-align:center; width:45%;"><div class="w2-name" style="font-size:14px;">${w2.name}</div></div>
                     </div>
+                    
+                    <div class="section-header">상세 스펙 비교 (풀파츠)</div>
                     <table class="comp-table">
-                        <tr>
-                            <td class="col-label">기본뎀</td>
-                            <td class="col-w1 ${cPower[0]}">${w1.power}</td>
-                            <td class="col-w2 ${cPower[1]}">${w2.power}</td>
-                        </tr>
-                        <tr>
-                            <td class="col-label">거리뎀</td>
-                            <td class="col-w1 ${cDist[0]}">${s1.distDmg.toFixed(1)}</td>
-                            <td class="col-w2 ${cDist[1]}">${s2.distDmg.toFixed(1)}</td>
-                        </tr>
-                        <tr>
-                            <td class="col-label">가슴</td>
-                            <td class="col-w1 ${cChest[0]}">${s1.finalChest.toFixed(1)}</td>
-                            <td class="col-w2 ${cChest[1]}">${s2.finalChest.toFixed(1)}</td>
-                        </tr>
-                        <tr>
-                            <td class="col-label">가슴킬</td>
-                            <td class="col-w1 ${cHTK[0]}">${s1.htkChest}발</td>
-                            <td class="col-w2 ${cHTK[1]}">${s2.htkChest}발</td>
-                        </tr>
-                        <tr class="head-row">
-                            <td class="col-label">헤드</td>
-                            <td class="col-w1 ${cHead[0]}">${s1.finalHead.toFixed(1)}</td>
-                            <td class="col-w2 ${cHead[1]}">${s2.finalHead.toFixed(1)}</td>
-                        </tr>
-                        <tr class="head-row">
-                            <td class="col-label">헤드킬</td>
-                            <td class="col-w1 ${cHTKHead[0]}">${s1.htkHead}발</td>
-                            <td class="col-w2 ${cHTKHead[1]}">${s2.htkHead}발</td>
-                        </tr>
+                        ${renderRow('1발당 데미지', w1.power, w2.power, (a,b)=>cmp(a,b))}
+                        ${renderRow('초당 데미지', s1.dps, s2.dps, (a,b)=>cmp(a,b))}
+                        ${renderRow('연사속도', w1.fireRate, w2.fireRate, (a,b)=>cmp(a,b,true))}
+                        ${renderRow('탄속', w1.speed, w2.speed, (a,b)=>cmp(a,b))}
+                        ${renderRow('안정성', w1.stability, w2.stability, (a,b)=>cmp(a,b))}
+                        ${renderRow('사거리', w1.range, w2.range, (a,b)=>cmp(a,b))}
+                    </table>
+
+                    <div class="section-header" style="margin-top:5px;">실전 데미지 (${currentDistance}m)</div>
+                    <table class="comp-table">
+                        ${renderRow('거리 데미지', s1.distDmg.toFixed(1), s2.distDmg.toFixed(1), (a,b)=>cmp(a,b))}
+                        ${renderRow('가슴', s1.finalChest.toFixed(1), s2.finalChest.toFixed(1), (a,b)=>cmp(a,b))}
+                        ${renderRow('헤드', s1.finalHead.toFixed(1), s2.finalHead.toFixed(1), (a,b)=>cmp(a,b))}
+                        ${renderRow('가슴킬', s1.htkChest+'발', s2.htkChest+'발', (a,b)=>cmp(parseFloat(a),parseFloat(b),true))}
+                        ${renderRow('헤드킬', s1.htkHead+'발', s2.htkHead+'발', (a,b)=>cmp(parseFloat(a),parseFloat(b),true))}
                     </table>
                 `;
             }
