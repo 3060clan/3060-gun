@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>3060 총기 연구소 (Realism Patch)</title>
+    <title>3060 총기 연구소 (Geon Edition)</title>
     <style>
         /* [기본 설정] 깜빡임 방지 유지 */
         * { box-sizing: border-box; }
@@ -136,7 +136,7 @@
 <body>
 
     <h1>🔫 3060 총기 연구소</h1>
-    <p class="subtitle">REALISM PATCH | 풀파츠 기준 현실 고증 패치</p>
+    <p class="subtitle">REALISM PATCH | 건이의 훈련장 검증 완료</p>
 
     <div class="container">
         <div class="controls-wrapper">
@@ -191,10 +191,10 @@
     <div class="footer">Designed by Mini-hyung for Geon & 3060 Clan</div>
 
     <script>
-        // [리얼리즘 패치] 건이의 피드백 반영
-        // SMG(MP5K, Vector, JS9): 안정성 97~99 (무반동 레이저)
-        // M416: 안정성 93 (AR 중 최고존엄이지만 SMG보단 반동 있음)
-        // SCAR-L: 안정성 91 (M4보다 연사가 느려 체감 반동 낮지만 스펙상 M4 우위)
+        // [긴급 수정] 건이의 훈련장 검증 피드백 반영
+        // MP5K: 손잡이+개머리판 장착 가능 -> 안정성 99 (최강)
+        // JS9: 손잡이 장착 불가 -> 안정성 96 (MP5K보다 소폭 하향)
+        
         const weapons = [
             { name: "Beryl M762", type: "AR", power: 44, ammo: "7.62mm", img: "Main_BerylM762_C.png", fireRate: 0.086, speed: 715, stability: 65, range: 400 },
             { name: "AKM", type: "AR", power: 47, ammo: "7.62mm", img: "Main_AKM_C.png", fireRate: 0.100, speed: 715, stability: 60, range: 400 },
@@ -202,7 +202,6 @@
             { name: "ACE32", type: "AR", power: 43, ammo: "7.62mm", img: "Main_Ace32_C.png", fireRate: 0.088, speed: 720, stability: 70, range: 400 },
             { name: "Mk47 Mutant", type: "AR", power: 49, ammo: "7.62mm", img: "Main_Mk47Mutant_C.png", fireRate: 0.100, speed: 780, stability: 65, range: 500 },
             
-            // M416: 풀파츠 기준 93점으로 하향 (SMG보다는 반동이 있음)
             { name: "M416", type: "AR", power: 41, ammo: "5.56mm", img: "Main_M416_C.png", fireRate: 0.086, speed: 880, stability: 93, range: 450 },
             { name: "AUG", type: "AR", power: 41, ammo: "5.56mm", img: "Main_AUG_C.png", fireRate: 0.086, speed: 890, stability: 89, range: 450 },
             { name: "SCAR-L", type: "AR", power: 42, ammo: "5.56mm", img: "Main_ScarL_C.png", fireRate: 0.096, speed: 870, stability: 91, range: 400 },
@@ -224,14 +223,14 @@
             { name: "Kar98k", type: "SR", power: 79, ammo: "7.62mm", img: "Main_Kar98k_C.png", fireRate: 1.9, speed: 760, stability: 90, range: 800 },
             { name: "M24", type: "SR", power: 75, ammo: "7.62mm", img: "Main_M24_C.png", fireRate: 1.8, speed: 790, stability: 90, range: 800 },
             
-            // SMG: MP5K, Vector 등은 풀파츠 시 무반동 레이저 (97~99)
+            // SMG: MP5K 99점(손잡이O) vs JS9 96점(손잡이X)
             { name: "P90", type: "SMG", power: 35, ammo: "5.7mm", img: "Main_P90_C.png", fireRate: 0.050, speed: 400, stability: 100, range: 200 },
             { name: "Vector", type: "SMG", power: 31, ammo: "9mm", img: "Main_Vector_C.png", fireRate: 0.055, speed: 350, stability: 98, range: 150 },
             { name: "UMP", type: "SMG", power: 41, ammo: ".45 ACP", img: "Main_UMP45_C.png", fireRate: 0.092, speed: 360, stability: 97, range: 200 },
             { name: "MP5K", type: "SMG", power: 33, ammo: "9mm", img: "Main_MP5K_C.png", fireRate: 0.067, speed: 380, stability: 99, range: 200 },
+            { name: "JS9", type: "SMG", power: 35, ammo: "9mm", img: "Main_JS9_C.png", fireRate: 0.060, speed: 400, stability: 96, range: 200 },
             { name: "Micro UZI", type: "SMG", power: 26, ammo: "9mm", img: "Main_UZI_C.png", fireRate: 0.048, speed: 350, stability: 88, range: 150 },
             { name: "Tommy Gun", type: "SMG", power: 40, ammo: ".45 ACP", img: "Main_TommyGun_C.png", fireRate: 0.086, speed: 280, stability: 75, range: 200 },
-            { name: "JS9", type: "SMG", power: 35, ammo: "9mm", img: "Main_JS9_C.png", fireRate: 0.060, speed: 400, stability: 100, range: 200 },
             
             { name: "MG3", type: "LMG", power: 40, ammo: "7.62mm", img: "Main_MG3_C.png", fireRate: 0.060, speed: 820, stability: 75, range: 500 },
             { name: "DP-28", type: "LMG", power: 51, ammo: "7.62mm", img: "Main_DP28_C.png", fireRate: 0.109, speed: 715, stability: 80, range: 500 },
